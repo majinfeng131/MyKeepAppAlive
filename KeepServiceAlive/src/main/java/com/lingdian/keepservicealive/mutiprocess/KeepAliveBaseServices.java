@@ -1,4 +1,4 @@
-package com.jiayuan.xuhuawei.keepappalive.mutiservice;
+package com.lingdian.keepservicealive.mutiprocess;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -9,17 +9,15 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-
 import android.util.Log;
 
-import com.jiayuan.xuhuawei.keepappalive.aidls.MutiProcessService;
-import com.jiayuan.xuhuawei.keepappalive.services.MainService;
 
+import com.jiayuan.xuhuawei.keepappalive.aidls.MutiProcessService;
+import com.lingdian.keepservicealive.constant.KSAConst;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
-import static com.jiayuan.xuhuawei.keepappalive.constant.ActionConst.ACTION_SET_UP_SERVICE;
 
 /**
  * Created by Administrator on 2016/10/28 0028.
@@ -30,6 +28,7 @@ public abstract class KeepAliveBaseServices extends Service {
     private KeepAliveBaseServices.MyConn myConn;
     private Class otherServiceClass;
 
+    private String packageName;
     protected String TAG = "";
 
     abstract Class onMyCreate();
@@ -49,31 +48,27 @@ public abstract class KeepAliveBaseServices extends Service {
     public void onCreate() {
         super.onCreate();
         TAG = this.getClass().getName();
-        Log.e("xhw", "onCreate:" + TAG);
+        Log.e("serviceLog", "onCreate:" + TAG);
         otherServiceClass = onMyCreate();
         myBinder = new KeepAliveBaseServices.MyBinder();
         myConn = new KeepAliveBaseServices.MyConn();
-
-
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         onMyStartCommand(intent);
-
-        Log.e("xhw", "onStartCommand: " + TAG);
         boolean bind = intent.getBooleanExtra("bind", false);
         if (bind) {
             Intent otheriIntent = new Intent(this, otherServiceClass);
             startService(otheriIntent);
         }
+
         bindService(new Intent(this, otherServiceClass), myConn, Context.BIND_IMPORTANT);
 
         if (bind) {
-            MainService.startMainService();
+            KSAConst.getInstance().setupMainService();
         }
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -81,7 +76,7 @@ public abstract class KeepAliveBaseServices extends Service {
     public void onDestroy() {
         super.onDestroy();
         onMyDestroy();
-        Log.e("xhw", "onDestroy: " + TAG);
+        Log.e("serviceLog", "onDestroy: " + TAG);
     }
 
     class MyBinder extends MutiProcessService.Stub {
@@ -98,7 +93,7 @@ public abstract class KeepAliveBaseServices extends Service {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Log.v("xhw", "onServiceConnected:" + TAG);
+            Log.v("serviceLog", "onServiceConnected:" + TAG);
 //            KeepAliveBaseServices.MyBinder binder=(KeepAliveBaseServices.MyBinder)iBinder;
             MutiProcessService binder=  MutiProcessService.Stub.asInterface(iBinder);
             try {
@@ -110,7 +105,7 @@ public abstract class KeepAliveBaseServices extends Service {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {//异常连接断开的时候 会回调  正常解绑的时候 不会回调
-            Log.e("xhw", "onServiceDisconnected:" + TAG);
+            Log.e("serviceLog", "onServiceDisconnected:" + TAG);
             Intent intent = new Intent();
             intent.putExtra("bind", true);
             intent.setComponent(componentName);
@@ -155,7 +150,7 @@ public abstract class KeepAliveBaseServices extends Service {
 
         try {
             if (mRemote == null || mServiceData == null) {
-                Log.e("Daemon", "REMOTE IS NULL or PARCEL IS NULL !!!");
+                Log.e("serviceLog", "REMOTE IS NULL or PARCEL IS NULL !!!");
                 return false;
             }
             mRemote.transact(34, mServiceData, null, 0);//START_SERVICE_TRANSACTION = 34

@@ -1,9 +1,5 @@
-package com.jiayuan.xuhuawei.keepappalive.mutiservice;
+package com.lingdian.keepservicealive.mutiprocess;
 
-import android.content.Context;
-
-import com.jiayuan.xuhuawei.keepappalive.MyApp;
-import com.jiayuan.xuhuawei.keepappalive.constant.ActionConst;
 
 /**
  * Created by Administrator on 2017/5/19 0019.
@@ -11,9 +7,9 @@ import com.jiayuan.xuhuawei.keepappalive.constant.ActionConst;
 
 public class KeepAliveHelper {
     private static KeepAliveHelper instance = null;
-    private Context context;
+
     private KeepAliveHelper(){
-        context= MyApp.getAppContext();
+
     }
 
     public static KeepAliveHelper getInstance() {
@@ -31,11 +27,9 @@ public class KeepAliveHelper {
      * 启动service
      */
     public void startAliveService(){
-        AlarmService.startAlarmService();
         LocalServices.startAlarmService(false);
     }
     public void initStartAliveService(){
-        AlarmService.startAlarmService();
         LocalServices.startAlarmService(true);
     }
 }

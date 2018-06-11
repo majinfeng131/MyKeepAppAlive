@@ -1,4 +1,4 @@
-package com.jiayuan.xuhuawei.keepappalive.mutiservice;
+package com.lingdian.keepservicealive.mutiprocess;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -11,11 +11,10 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 
-import com.jiayuan.xuhuawei.keepappalive.MyApp;
-import com.jiayuan.xuhuawei.keepappalive.R;
-import com.jiayuan.xuhuawei.keepappalive.constant.ActionConst;
-import com.jiayuan.xuhuawei.keepappalive.notification.CancelNoticeService;
-import com.jiayuan.xuhuawei.keepappalive.services.MainService;
+import com.lingdian.keepservicealive.R;
+import com.lingdian.keepservicealive.constant.KSAConst;
+import com.lingdian.keepservicealive.jobschedule.MyJobDaemonService;
+import com.lingdian.keepservicealive.notification.CancelNoticeService;
 
 /**
  * 闹钟service
@@ -24,12 +23,17 @@ public class AlarmService extends Service {
     public static final int NOTICE_ID = 100;
 
     public static void startAlarmService() {
-        Context context= MyApp.getAppContext();
+        //启动常规
+        Context context= KSAConst.getInstance().getAppContext();
         Intent intent=new Intent(context,AlarmService.class);
         context.startService(intent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            MyJobDaemonService.setupJobService();
+        }
     }
 
-    private static final int INTERVAL_TIME=10 * 1000;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,6 +66,9 @@ public class AlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent,  int flags, int startId) {
          super.onStartCommand(intent, flags, startId);
+
+
+
         return START_STICKY;
     }
 
@@ -83,17 +90,17 @@ public class AlarmService extends Service {
     protected void startAlarm(){
         // 立刻执行，此后5分钟走一次//SystemClock.elapsedRealtime()
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplicationContext(), MainService.class);
-        intent.setAction(ActionConst.ALARM_ACTION);
+        Intent intent = new Intent(getApplicationContext(), KSAConst.getInstance().getServiceClass());
+        intent.setAction(KSAConst.ALARM_ACTION);
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         //触发服务的起始时间
         long triggerAtTime = SystemClock.elapsedRealtime();
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), INTERVAL_TIME, pendingIntent);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), KSAConst.INTERVAL_TIME, pendingIntent);
     }
 
     private void stopAlarm() {
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplicationContext(), MainService.class);
+        Intent intent = new Intent(getApplicationContext(), KSAConst.getInstance().getServiceClass());
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarm.cancel(pendingIntent);
     }

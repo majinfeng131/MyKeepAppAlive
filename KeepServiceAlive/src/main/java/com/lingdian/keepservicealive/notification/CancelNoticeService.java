@@ -1,4 +1,4 @@
-package com.jiayuan.xuhuawei.keepappalive.notification;
+package com.lingdian.keepservicealive.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,9 +10,10 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.jiayuan.xuhuawei.keepappalive.R;
+import com.lingdian.keepservicealive.R;
 
-import static com.jiayuan.xuhuawei.keepappalive.mutiservice.AlarmService.NOTICE_ID;
+import static com.lingdian.keepservicealive.mutiprocess.AlarmService.NOTICE_ID;
+
 
 public class CancelNoticeService extends Service {
     @Nullable
@@ -24,7 +25,7 @@ public class CancelNoticeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v("xhw","CancelNoticeService onStartCommand onCreate");
+        Log.v("serviceLog","CancelNoticeService onStartCommand onCreate");
     }
 
 
@@ -44,7 +45,7 @@ private void stopNotificationService(){
     new Thread(new Runnable() {
         @Override
         public void run() {
-            Log.v("xhw","CancelNoticeService onStartCommand cancel");
+            Log.v("serviceLog","CancelNoticeService onStartCommand cancel");
             // 延迟1s
             SystemClock.sleep(1000);
             // 取消CancelNoticeService的前台

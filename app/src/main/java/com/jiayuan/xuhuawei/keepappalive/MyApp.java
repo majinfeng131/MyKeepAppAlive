@@ -4,7 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.jiayuan.xuhuawei.keepappalive.utils.Utils;
+import com.lingdian.keepservicealive.constant.KSAConst;
+import com.lingdian.keepservicealive.utils.KSAUtils;
 
 /**
  * Created by Administrator on 2016/10/9 0009.
@@ -16,7 +17,8 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         application=this;
-        Log.v("xhw","MyApp "+ Utils.getCurProcessName(this));
+        Log.v("xhw","MyApp "+ KSAUtils.getCurProcessName(this));
+        KSAConst.getInstance().init(this, MainService.class);
     }
 
     /**

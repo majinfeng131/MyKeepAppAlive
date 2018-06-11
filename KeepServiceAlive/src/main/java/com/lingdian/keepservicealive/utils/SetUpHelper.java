@@ -1,4 +1,4 @@
-package com.jiayuan.xuhuawei.keepappalive.utils;
+package com.lingdian.keepservicealive.utils;
 
 import android.content.ComponentName;
 import android.content.Context;

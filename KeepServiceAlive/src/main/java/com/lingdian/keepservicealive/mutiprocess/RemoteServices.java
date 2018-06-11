@@ -1,4 +1,4 @@
-package com.jiayuan.xuhuawei.keepappalive.mutiservice;
+package com.lingdian.keepservicealive.mutiprocess;
 
 import android.content.Intent;
 

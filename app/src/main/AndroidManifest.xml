@@ -3,6 +3,8 @@
     package="com.jiayuan.xuhuawei.keepappalive">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -12,44 +14,19 @@
         android:name=".MyApp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receivers.KeepAliveReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.intent.action.MEDIA_MOUNTED" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-        </receiver>
 
         <service
-            android:name=".mutiservice.RemoteServices"
-            android:exported="true"
-            android:process="com.huawei.remoteService" />
-        <service
-            android:name=".mutiservice.LocalServices"
-            android:exported="true"
-            android:process="com.huawei.LocalServices" />
-        <service
-            android:name=".services.MainService"
+            android:name=".MainService"
             android:exported="true" >
-            <intent-filter>
-                <action android:name="action.set.up.service"/>
-            </intent-filter>
         </service>
-
-
-        <service android:name=".mutiservice.AlarmService" />
-        <service android:name=".notification.CancelNoticeService" />
 
     </application>
 

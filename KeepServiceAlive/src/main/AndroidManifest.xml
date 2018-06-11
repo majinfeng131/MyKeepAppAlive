@@ -1,0 +1,42 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lingdian.keepservicealive" >
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <application >
+
+
+        <receiver android:name=".receivers.KeepAliveReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+
+        <service
+            android:name=".mutiprocess.RemoteServices"
+            android:exported="true"
+            android:process="com.huawei.remoteService" />
+
+        <service
+            android:name=".mutiprocess.LocalServices"
+            android:exported="true"
+            android:process="com.huawei.LocalServices" />
+
+        <service android:name=".mutiprocess.AlarmService" />
+
+        <service android:name=".notification.CancelNoticeService" />
+
+        <service
+            android:name=".jobschedule.MyJobDaemonService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+    </application>
+
+
+</manifest>

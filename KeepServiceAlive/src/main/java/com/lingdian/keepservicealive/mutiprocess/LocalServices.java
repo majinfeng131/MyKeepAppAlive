@@ -1,20 +1,22 @@
-package com.jiayuan.xuhuawei.keepappalive.mutiservice;
+package com.lingdian.keepservicealive.mutiprocess;
 
 import android.content.Context;
 import android.content.Intent;
 
-import com.jiayuan.xuhuawei.keepappalive.MyApp;
+import com.lingdian.keepservicealive.constant.KSAConst;
 
 public class LocalServices extends KeepAliveBaseServices {
 
     public static void startAlarmService(boolean isBind) {
-        Context context = MyApp.getAppContext();
+
+        AlarmService.startAlarmService();
+
+        Context context= KSAConst.getInstance().getAppContext();
+
         Intent intent = new Intent(context, LocalServices.class);
         intent.putExtra("bind", isBind);
         context.startService(intent);
     }
-
-    private static final String TAG = "OldLocalServices";
 
     @Override
     Class onMyCreate() {
