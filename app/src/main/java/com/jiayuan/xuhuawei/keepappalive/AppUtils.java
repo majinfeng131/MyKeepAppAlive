@@ -11,7 +11,11 @@ import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
 import com.jiayuan.xuhuawei.keepappalive.entity.AppEntity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AppUtils {
@@ -84,7 +88,7 @@ public class AppUtils {
         return null;
     }
 
-    public static boolean checkPackInfo(Context context,String packname) {
+    public static boolean checkPackInfo(Context context, String packname) {
         PackageInfo packageInfo = null;
         try {
             packageInfo = context.getPackageManager().getPackageInfo(packname, 0);
@@ -94,5 +98,11 @@ public class AppUtils {
         return packageInfo != null;
     }
 
-
+    public static int getDayofweek() {
+        Date today = new Date();
+        Calendar c=Calendar.getInstance();
+        c.setTime(today);
+        int weekday=c.get(Calendar.DAY_OF_WEEK);
+        return weekday;
+    }
 }

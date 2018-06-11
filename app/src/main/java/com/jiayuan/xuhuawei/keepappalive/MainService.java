@@ -1,19 +1,12 @@
 package com.jiayuan.xuhuawei.keepappalive;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.jiayuan.xuhuawei.keepappalive.entity.AppEntity;
 import com.lingdian.keepservicealive.KSABaseService;
-import com.lingdian.keepservicealive.constant.KSAConst;
-import com.lingdian.keepservicealive.utils.KSAUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +19,7 @@ public class MainService extends KSABaseService implements Runnable{
 
     private static final String PACKAGE_NAME = "com.sand.airdroid";
     private static final long INTERVAL_TIME = 300 ;
+    private static final long INTERVAL_MAX_TIME = 2*60*60 ;
     private static AtomicInteger saleInteger=new AtomicInteger(0);
     private Thread thread;
     private boolean isRunning=false;
@@ -67,33 +61,56 @@ public class MainService extends KSABaseService implements Runnable{
             }
             int index=saleInteger.getAndIncrement();
 
-            if (index%INTERVAL_TIME==0){
+            long maxValue=index%INTERVAL_MAX_TIME;
+            long comValue=index%INTERVAL_TIME;
+
+            boolean isWeekend=AppUtils.getDayofweek()==1||AppUtils.getDayofweek()==7;
+            if (isWeekend){
+
+            }
+
+
+            if (comValue==0&&maxValue!=0){
+                excuteSetup(false);
+            }else if (maxValue==0){
                 saleInteger.getAndSet(1);
-                excuteSetup();
+                excuteSetup(true);
             }
         }
     }
 
-    private void excuteSetup(){
-        List<AppEntity> list = AppUtils.getAndroidProcess(this);
-        boolean isRunning = false;
-        for (AppEntity bean : list) {
-            if (bean.getPackageName().equals(PACKAGE_NAME)) {
-                isRunning = true;
-                break;
+    private void excuteSetup(boolean isForce){
+        if (!isForce){
+            List<AppEntity> list = AppUtils.getAndroidProcess(this);
+            boolean isRunning = false;
+            for (AppEntity bean : list) {
+                if (bean.getPackageName().equals(PACKAGE_NAME)) {
+                    isRunning = true;
+                    break;
+                }
             }
-        }
-        if (!isRunning) {
-            PackageManager packageManager = getPackageManager();
+
+            if (!isRunning) {
+                PackageManager packageManager = getPackageManager();
+                if (AppUtils.checkPackInfo(this, PACKAGE_NAME)) {
+                    Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_NAME);
+                    startActivity(jumpIntent);
+                } else {
+                    Log.v("xhw", "target app is not install");
+                }
+                Log.v("xhw", "target app is not running");
+            } else {
+                Log.v("xhw", "target app is  running");
+            }
+        }else{
+            Log.v("xhw", "force setup！");
             if (AppUtils.checkPackInfo(this, PACKAGE_NAME)) {
+                PackageManager packageManager = getPackageManager();
                 Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_NAME);
                 startActivity(jumpIntent);
-            } else {
-                Log.v("xhw", "com.sand.airdroid is not install");
+            }else{
+                Log.v("xhw", "target app is not install");
             }
-            Log.v("xhw", "com.sand.airdroid is not running");
-        } else {
-            Log.v("xhw", "com.sand.airdroid is  running");
         }
     }
 
