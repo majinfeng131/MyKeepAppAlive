@@ -105,4 +105,29 @@ public class AppUtils {
         int weekday=c.get(Calendar.DAY_OF_WEEK);
         return weekday;
     }
+    public static int getHourofDay() {
+
+        Date today = new Date();
+        Calendar now=Calendar.getInstance();
+        now.setTime(today);
+
+        int year=now.get(Calendar.YEAR);
+        int month=now.get(Calendar.MONTH)+ 1;
+        int day=now.get(Calendar.DAY_OF_MONTH);
+        int hour=now.get(Calendar.HOUR_OF_DAY);
+        int minute=now.get(Calendar.MINUTE);
+        int second=now.get(Calendar.SECOND);
+
+        StringBuffer buffer=new StringBuffer();
+        buffer
+        .append("年：").append(year)
+        .append("月：").append(month)
+        .append("日：").append(day)
+        .append("时：").append(hour)
+        .append("分：").append(minute)
+        .append("秒：").append(second);
+
+
+        return now.get(Calendar.HOUR_OF_DAY);
+    }
 }

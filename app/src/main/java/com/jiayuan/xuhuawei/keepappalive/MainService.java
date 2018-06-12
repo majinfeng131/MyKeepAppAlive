@@ -19,7 +19,8 @@ public class MainService extends KSABaseService implements Runnable{
 
     private static final String PACKAGE_NAME = "com.sand.airdroid";
     private static final long INTERVAL_TIME = 300 ;
-    private static final long INTERVAL_MAX_TIME = 2*60*60 ;
+    private static final long INTERVAL_MAX_COMM_TIME = 2*60*60 ;
+    private static final long INTERVAL_MAX_WEEKEND_TIME = 1*60*60 ;
     private static AtomicInteger saleInteger=new AtomicInteger(0);
     private Thread thread;
     private boolean isRunning=false;
@@ -61,12 +62,14 @@ public class MainService extends KSABaseService implements Runnable{
             }
             int index=saleInteger.getAndIncrement();
 
-            long maxValue=index%INTERVAL_MAX_TIME;
-            long comValue=index%INTERVAL_TIME;
-
             boolean isWeekend=AppUtils.getDayofweek()==1||AppUtils.getDayofweek()==7;
-            if (isWeekend){
 
+            long maxValue;
+            long comValue=index%INTERVAL_TIME;
+            if (isWeekend){
+                maxValue=index% INTERVAL_MAX_COMM_TIME;
+            }else{
+                maxValue=index% INTERVAL_MAX_WEEKEND_TIME;
             }
 
 
