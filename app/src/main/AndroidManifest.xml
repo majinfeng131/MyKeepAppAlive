@@ -27,6 +27,12 @@
             android:name=".MainService"
             android:exported="true" >
         </service>
+        <service
+            android:name=".MainTestService"
+            android:exported="true" >
+        </service>
+
+
 
     </application>
 

@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/KeepServiceAlive/KeepServiceAlive.iml" filepath="$PROJECT_DIR$/KeepServiceAlive/KeepServiceAlive.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/MyKeepAppAlive.iml" filepath="$PROJECT_DIR$/.idea/MyKeepAppAlive.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/getipush/getipush.iml" filepath="$PROJECT_DIR$/getipush/getipush.iml" />
     </modules>
   </component>
 </project>
