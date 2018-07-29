@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lingdian.getipush">
+
+    <!-- 支持iBeancon 需要蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 支持个推3.0 电子围栏功能 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application>
+        <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复-->
+        <service android:name="com.lingdian.push.getui.GetuiReceiverIntentService" />
+        <!-- 配置SDK核心服务 -->
+        <service
+            android:name="com.lingdian.push.getui.GetuiPushService"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":pushservice"/>
+    </application>
+</manifest>

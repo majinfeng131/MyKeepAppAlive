@@ -157,7 +157,9 @@ public class MainService extends KSABaseService implements Runnable{
     }
 
 
-
+    /**
+     * 执行跳转
+     */
     private void executeJump(){
         if (AppUtils.isNetworkConnected(this)) {
             handler.sendEmptyMessage(TYPE_JUMP_TARGET);
