@@ -110,13 +110,19 @@ public class MainService extends KSABaseService implements Runnable{
                 } else {
                     //如果是平时 执行平时时段
                     if (comValue == 0 && maxValue != 0) {
+                        Log.v("xhw","小检查");
                         if (isAtCommImportTime()){
                             excuteSetup(false);
+                        }else{
+                            Log.v("xhw","小检查 不再敏感期");
                         }
                     } else if (maxValue == 0) {
+                        Log.v("xhw","大检查");
                         if (isAtCommImportTime()){
                             saleInteger.getAndSet(1);
                             excuteSetup(true);
+                        }else{
+                            Log.v("xhw","大检查 不再敏感期");
                         }
                     }
                 }
@@ -163,11 +169,11 @@ public class MainService extends KSABaseService implements Runnable{
     private void executeJump(){
         if (AppUtils.isNetworkConnected(this)) {
             handler.sendEmptyMessage(TYPE_JUMP_TARGET);
-            handler.sendEmptyMessageDelayed(TYPE_JUMP_COVER,2000);
+            handler.sendEmptyMessageDelayed(TYPE_JUMP_COVER,5000);
         } else {
             handler.sendEmptyMessage(TYPE_JUMP_WIFI);
             handler.sendEmptyMessageDelayed(TYPE_JUMP_TARGET, 10000);
-            handler.sendEmptyMessageDelayed(TYPE_JUMP_COVER,12000);
+            handler.sendEmptyMessageDelayed(TYPE_JUMP_COVER,15000);
         }
     }
 
@@ -224,7 +230,8 @@ public class MainService extends KSABaseService implements Runnable{
 
         @Override
         public void onReceiveMessageData(Context context, String msg, String msgId) {
-            if (TextUtils.isEmpty(msg)){
+            if (!TextUtils.isEmpty(msg)){
+                Log.v("xhw","msg coming "+msg);
                 if (msg.contains("1")){
                     executeJump();
                 }else if (msg.contains("2")){
