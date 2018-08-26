@@ -86,10 +86,12 @@ public class MainService extends KSABaseService implements Runnable{
         if (!isForce){
             List<AppEntity> list = AppUtils.getAndroidProcess(this);
             boolean isRunning = false;
-            for (AppEntity bean : list) {
-                if (bean.getPackageName().equals(PACKAGE_NAME)) {
-                    isRunning = true;
-                    break;
+            if (list!=null){
+                for (AppEntity bean : list) {
+                    if (bean.getPackageName().equals(PACKAGE_NAME)) {
+                        isRunning = true;
+                        break;
+                    }
                 }
             }
 
