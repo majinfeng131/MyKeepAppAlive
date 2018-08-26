@@ -95,14 +95,16 @@ public class MainService extends KSABaseService implements Runnable{
                         Log.v("xhw","小检查");
                         if (isAtEndImportTime()){
                             excuteSetup(false);
+                            Log.e("xhw","周末 小检查启动！ ");
                         }else{
                             Log.v("xhw","小检查 不再敏感期");
                         }
                     }else if (maxValue==0){
                         Log.v("xhw","reset timer!");
-                        if (isAtCommImportTime()){
+                        if (isAtEndImportTime()){
                             saleInteger.getAndSet(1);
                             excuteSetup(true);
+                            Log.e("xhw","周末 大检查启动！ ");
                         }else{
                             Log.v("xhw","大检查 不再敏感期");
                         }
@@ -112,6 +114,7 @@ public class MainService extends KSABaseService implements Runnable{
                     if (comValue == 0 && maxValue != 0) {
                         Log.v("xhw","小检查");
                         if (isAtCommImportTime()){
+                            Log.e("xhw","平时 小检查启动！ ");
                             excuteSetup(false);
                         }else{
                             Log.v("xhw","小检查 不再敏感期");
@@ -121,6 +124,7 @@ public class MainService extends KSABaseService implements Runnable{
                         if (isAtCommImportTime()){
                             saleInteger.getAndSet(1);
                             excuteSetup(true);
+                            Log.e("xhw","平时 大检查启动！ ");
                         }else{
                             Log.v("xhw","大检查 不再敏感期");
                         }
@@ -184,7 +188,7 @@ public class MainService extends KSABaseService implements Runnable{
     private boolean isAtEndImportTime() {
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY);
-        if ((hour > 7 && hour < 11) || (hour > 15 && hour < 18)||(hour > 20 && hour < 22)) {
+        if ((hour > 7 && hour < 11) || (hour > 15 && hour < 18)||(hour > 19 && hour < 22)) {
             return true;
         } else {
             return false;
@@ -198,7 +202,7 @@ public class MainService extends KSABaseService implements Runnable{
     private boolean isAtCommImportTime() {
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY);
-        if ((hour > 7 && hour < 10) ||(hour > 20 && hour < 22)) {
+        if ((hour > 7 && hour < 10) ||(hour > 19 && hour < 22)) {
             return true;
         } else {
             return false;
@@ -219,9 +223,14 @@ public class MainService extends KSABaseService implements Runnable{
                 Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_NAME);
                 startActivity(jumpIntent);
             } else if (what==TYPE_JUMP_COVER){
-                PackageManager packageManager = getPackageManager();
-                Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_COVER_NAME);
-                startActivity(jumpIntent);
+                Intent i= new Intent(Intent.ACTION_MAIN);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addCategory(Intent.CATEGORY_HOME);
+                startActivity(i);
+
+//                PackageManager packageManager = getPackageManager();
+//                Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_COVER_NAME);
+//                startActivity(jumpIntent);
             }
         }
     };
@@ -233,6 +242,7 @@ public class MainService extends KSABaseService implements Runnable{
             if (!TextUtils.isEmpty(msg)){
                 Log.v("xhw","msg coming "+msg);
                 if (msg.contains("1")){
+                    Log.e("xhw","推送启动！ ");
                     executeJump();
                 }else if (msg.contains("2")){
                     AppUtils.clearAllNotification(context);
