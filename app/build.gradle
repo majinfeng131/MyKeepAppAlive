@@ -1,15 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 27
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.jiayuan.xuhuawei.keepappalive"
-        minSdkVersion 15
-        targetSdkVersion 24
+        minSdkVersion 16
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                GETUI_APP_ID : "LrsQKQuEiW6zQOOpNl6HG4",
+                GETUI_APP_KEY : "CnzG8qtzQL8NM27MJZa7e",
+                GETUI_APP_SECRET : "nfbwRF67vr89ij2B9WwcE4"
+        ]
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a"
+        }
     }
     buildTypes {
         release {
@@ -28,4 +37,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(path: ':KeepServiceAlive')
     compile files('libs/app_process_library.jar')
+    compile project(':getipush')
 }

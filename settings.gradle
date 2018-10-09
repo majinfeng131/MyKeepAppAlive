@@ -1,1 +1,1 @@
-include ':app', ':KeepServiceAlive'
+include ':app', ':KeepServiceAlive', ':getipush'

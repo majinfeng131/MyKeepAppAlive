@@ -1,11 +1,17 @@
 package com.jiayuan.xuhuawei.keepappalive;
 
 import android.app.ActivityManager;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Debug;
+import android.provider.Settings;
+import android.util.Log;
 
 import com.jaredrummler.android.processes.ProcessManager;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
@@ -17,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class AppUtils {
     private List<ApplicationInfo> appList;
@@ -100,34 +108,71 @@ public class AppUtils {
 
     public static int getDayofweek() {
         Date today = new Date();
-        Calendar c=Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
         c.setTime(today);
-        int weekday=c.get(Calendar.DAY_OF_WEEK);
+        int weekday = c.get(Calendar.DAY_OF_WEEK);
         return weekday;
     }
+
     public static int getHourofDay() {
 
         Date today = new Date();
-        Calendar now=Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
         now.setTime(today);
 
-        int year=now.get(Calendar.YEAR);
-        int month=now.get(Calendar.MONTH)+ 1;
-        int day=now.get(Calendar.DAY_OF_MONTH);
-        int hour=now.get(Calendar.HOUR_OF_DAY);
-        int minute=now.get(Calendar.MINUTE);
-        int second=now.get(Calendar.SECOND);
+        int year = now.get(Calendar.YEAR);
+        int month = now.get(Calendar.MONTH) + 1;
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+        int second = now.get(Calendar.SECOND);
 
-        StringBuffer buffer=new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
         buffer
-        .append("年：").append(year)
-        .append("月：").append(month)
-        .append("日：").append(day)
-        .append("时：").append(hour)
-        .append("分：").append(minute)
-        .append("秒：").append(second);
+                .append("年：").append(year)
+                .append("月：").append(month)
+                .append("日：").append(day)
+                .append("时：").append(hour)
+                .append("分：").append(minute)
+                .append("秒：").append(second);
 
 
         return now.get(Calendar.HOUR_OF_DAY);
     }
+
+    /**
+     * 判断网络是否连接.
+     */
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null) {
+                for (NetworkInfo ni : info) {
+                    if (ni.getState() == NetworkInfo.State.CONNECTED) {
+                        Log.d("xhw", "type = " + (ni.getType() == 0 ? "mobile" : ((ni.getType() == 1) ? "wifi" : "none")));
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 清空所有的通知
+     * @param context
+     */
+    public static void clearAllNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        //移除标记为id的通知 (只是针对当前Context下的所有Notification)
+//            notificationManager.cancel(notificationId);
+        //移除所有通知
+        notificationManager.cancelAll();
+    }
+
+    public static void jump2WifiSetting(Context context){
+        context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)); //直接进入手机中的wifi网络设置界面
+    }
+
 }
