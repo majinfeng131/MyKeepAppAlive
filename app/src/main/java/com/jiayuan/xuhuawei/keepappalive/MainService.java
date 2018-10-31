@@ -6,11 +6,11 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.jiayuan.xuhuawei.keepappalive.entity.AppEntity;
+import com.jiayuan.xuhuawei.keepappalive.utils.Utils;
 import com.lingdian.keepservicealive.KSABaseService;
 import com.lingdian.push.PushConfigHelper;
 import com.lingdian.push.comm.GetMsgHelper;
@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MainService extends KSABaseService implements Runnable{
     private static final int TYPE_JUMP_WIFI=1;
     private static final int TYPE_JUMP_TARGET=2;
-    private static final int TYPE_JUMP_COVER=3;
+    private static final int TYPE_JUMP_MAIN_COVER =3;
+    private static final int TYPE_JUMP_ALI=4;
 
     private static final String PACKAGE_NAME = "com.sand.airdroid";
     private static final String PACKAGE_COVER_NAME = "com.alibaba.android.rimet";
@@ -97,6 +98,7 @@ public class MainService extends KSABaseService implements Runnable{
                             excuteSetup(false);
                             Log.e("xhw","周末 小检查启动！ ");
                         }else{
+                            doNetCheck(false);
                             Log.v("xhw","小检查 不再敏感期");
                         }
                     }else if (maxValue==0){
@@ -106,6 +108,7 @@ public class MainService extends KSABaseService implements Runnable{
                             excuteSetup(true);
                             Log.e("xhw","周末 大检查启动！ ");
                         }else{
+                            doNetCheck(true);
                             Log.v("xhw","大检查 不再敏感期");
                         }
                     }
@@ -117,6 +120,7 @@ public class MainService extends KSABaseService implements Runnable{
                             Log.e("xhw","平时 小检查启动！ ");
                             excuteSetup(false);
                         }else{
+                            doNetCheck(false);
                             Log.v("xhw","小检查 不再敏感期");
                         }
                     } else if (maxValue == 0) {
@@ -126,6 +130,7 @@ public class MainService extends KSABaseService implements Runnable{
                             excuteSetup(true);
                             Log.e("xhw","平时 大检查启动！ ");
                         }else{
+                            doNetCheck(true);
                             Log.v("xhw","大检查 不再敏感期");
                         }
                     }
@@ -134,6 +139,12 @@ public class MainService extends KSABaseService implements Runnable{
         }
     }
 
+    private void doNetCheck(boolean isBigCheck){
+        if (!AppUtils.isNetworkConnected(this)) {
+            Utils.wakeUpAndUnlock(getApplication());
+            handler.sendEmptyMessage(TYPE_JUMP_WIFI);
+        }
+    }
 
     private void excuteSetup(boolean isForce){
         if (!isForce){
@@ -150,7 +161,7 @@ public class MainService extends KSABaseService implements Runnable{
 
             if (!isRunning) {
                 if (AppUtils.checkPackInfo(this, PACKAGE_NAME)) {
-                    executeJump();
+                    executeProxyJump();
                 } else {
                     Log.v("xhw", "target app is not install");
                 }
@@ -161,7 +172,7 @@ public class MainService extends KSABaseService implements Runnable{
         }else{
             Log.v("xhw", "force setup！");
             if (AppUtils.checkPackInfo(this, PACKAGE_NAME)) {
-                executeJump();
+                executeProxyJump();
             }else{
                 Log.v("xhw", "target app is not install");
             }
@@ -172,17 +183,25 @@ public class MainService extends KSABaseService implements Runnable{
     /**
      * 执行跳转
      */
-    private void executeJump(){
+    private void executeProxyJump(){
         if (AppUtils.isNetworkConnected(this)) {
             handler.sendEmptyMessage(TYPE_JUMP_TARGET);
-            handler.sendEmptyMessageDelayed(TYPE_JUMP_COVER,5000);
+            handler.sendEmptyMessageDelayed(TYPE_JUMP_MAIN_COVER,5000);
         } else {
             handler.sendEmptyMessage(TYPE_JUMP_WIFI);
             handler.sendEmptyMessageDelayed(TYPE_JUMP_TARGET, 10000);
-            handler.sendEmptyMessageDelayed(TYPE_JUMP_COVER,15000);
+            handler.sendEmptyMessageDelayed(TYPE_JUMP_MAIN_COVER,15000);
         }
     }
 
+    /**
+     * 跳转到ali
+     */
+    private void executeALiJump(){
+            Utils.wakeUpAndUnlock(getApplication());
+            handler.sendEmptyMessage(TYPE_JUMP_ALI);
+            handler.sendEmptyMessageDelayed(TYPE_JUMP_MAIN_COVER,5000);
+    }
     /**
      * 是否在敏感时间
      * @return  8、9点或者在16、17、或者在21
@@ -224,7 +243,7 @@ public class MainService extends KSABaseService implements Runnable{
                 PackageManager packageManager = getPackageManager();
                 Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_NAME);
                 startActivity(jumpIntent);
-            } else if (what==TYPE_JUMP_COVER){
+            } else if (what== TYPE_JUMP_MAIN_COVER){
                 Intent i= new Intent(Intent.ACTION_MAIN);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.addCategory(Intent.CATEGORY_HOME);
@@ -233,6 +252,10 @@ public class MainService extends KSABaseService implements Runnable{
 //                PackageManager packageManager = getPackageManager();
 //                Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_COVER_NAME);
 //                startActivity(jumpIntent);
+            }else if (what== TYPE_JUMP_ALI){
+                PackageManager packageManager = getPackageManager();
+                Intent jumpIntent = packageManager.getLaunchIntentForPackage(PACKAGE_COVER_NAME);
+                startActivity(jumpIntent);
             }
         }
     };
@@ -245,9 +268,11 @@ public class MainService extends KSABaseService implements Runnable{
                 Log.v("xhw","msg coming "+msg);
                 if (msg.contains("1")){
                     Log.e("xhw","推送启动！ ");
-                    executeJump();
+                    executeProxyJump();
                 }else if (msg.contains("2")){
                     AppUtils.clearAllNotification(context);
+                }else if (msg.contains("3")){//直接跳转
+                    executeALiJump();
                 }
             }
         }
