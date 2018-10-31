@@ -10,13 +10,13 @@ public class CommReceiveMsgHeplerListener implements OnMsgReceiverEventListener 
 
     @Override
     public void onReceiveMessageData(Context context, String msg, String msgId) {
-        Log.v("xhw","msg"+msg);
+        Log.v("xuhuawei","msg"+msg);
         GetMsgHelper.getInstance().onReceiveMessageData(context, msg, msgId);
 
     }
     @Override
     public void onReceiveClientId(Context context, String clientid) {
-        Log.v("xhw","clientid"+clientid);
+        Log.v("xuhuawei","clientid"+clientid);
         GetMsgHelper.getInstance().onReceiveClientId(context,clientid);
     }
     @Override
